@@ -1,13 +1,38 @@
 import type { ClickSelectOptions } from '@/src/behaviors';
-import data from '@@/dataset/cluster.json';
-import { Graph } from '@antv/g6';
+import data from '@@/dataset/oneThousandNodes.json';
+import { ExtensionCategory, Graph, register } from '@antv/g6';
+import { BreathingCircle } from './breathingCircle';
 
 export const behaviorClickSelect: TestCase = async (context) => {
+  register(ExtensionCategory.NODE, 'breathing-circle', BreathingCircle);
+
   const graph = new Graph({
     ...context,
     data,
-    layout: { type: 'd3-force' },
-    behaviors: [{ type: 'click-select', key: 'click-select' }, 'drag-element'],
+    animation: false,
+    layout: {
+      type: 'd3-force',
+      collide: {
+        radius: 30,
+      },
+      animation: false,
+    },
+    behaviors: [
+      'zoom-canvas',
+      { type: 'click-select', key: 'click-select' },
+      'drag-element',
+      { type: 'hover-activate', degree: 1 },
+    ],
+    node: {
+      type: 'breathing-circle',
+      style: {
+        halo: true,
+        size: 30,
+        labelText: (d) => d.id,
+      },
+      //type: 'breathing-circle',
+    },
+    autoResize: true,
   });
 
   await graph.render();
