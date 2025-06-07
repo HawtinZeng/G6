@@ -1,17 +1,20 @@
 import { Graph, treeToGraphData } from '@antv/g6';
 
 export const behaviorExpandCollapseNode: TestCase = async (context) => {
+  const data = treeToGraphData({
+    id: 'A',
+    children: [
+      { id: 'B', children: [{ id: 'D' }, { id: 'E' }] },
+      { id: 'C', children: [{ id: 'F' }, { id: 'G' }], style: { collapsed: true } },
+    ],
+  });
+  data.edges?.push({ source: 'A', target: 'E' });
+
   const graph = new Graph({
     ...context,
     x: 200,
     y: 200,
-    data: treeToGraphData({
-      id: 'A',
-      children: [
-        { id: 'B', children: [{ id: 'D' }, { id: 'E' }] },
-        { id: 'C', children: [{ id: 'F' }, { id: 'G' }], style: { collapsed: true } },
-      ],
-    }),
+    data,
     node: {
       style: {
         labelText: (d) => d.id,
